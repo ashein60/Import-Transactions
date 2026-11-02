@@ -12,8 +12,8 @@ Each month, start by clearing transactions, then import them throughout the mont
 - **Date:** 11/01/2026
 - **Account:** John Doe's CC - Instead of 1234, an alias can be used
 - **Description:** Kroger
-**- Category:** Groceries - Description is used to define this
-**- Amount:** -$50.00 - No need for Debit and Credit
+- **Category:** Groceries - Description is used to define this
+- **Amount:** -$50.00 - No need for Debit and Credit
 - **Excluded:** FALSE - Sometimes it's unnecessary to track money when it's moved between accounts
 
 # Tech Stack
