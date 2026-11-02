@@ -1,5 +1,5 @@
 # Import-Transactions
-Using bank csv files, create rules to customize or exclude bank transactions. This should work with any bank csv file, since rules are used to map to table column headers. I use Google sheets to manage a Summary table, but it's time consuming to manually handle each transaction.
+Using bank csv files, create rules to customize or exclude bank transactions. This only works with Capital One checking and savings accounts and credit cards. I use Google sheets to manage a Summary table, but it's time consuming to manually handle each transaction.
 
 > [!IMPORTANT]
 > This project is in progress. Not all features work yet.
