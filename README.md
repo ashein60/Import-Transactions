@@ -24,8 +24,9 @@ Sqlite
 Git
 
 # Task Commands
-- Build: python main build
-- Format Code: python main spotlessApply
+- **Build:** python -m main build
+- **Format Code:** python -m main spotlessApply
+- **Combined:** python -m main build spotlessApply
 
 # Run Tests
 - **Run all Tests:** python -m pytest
