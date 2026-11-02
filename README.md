@@ -4,8 +4,10 @@ Using bank csv files, create rules to customize or exclude bank transactions. Th
 > [!IMPORTANT]
 > This project is in progress. Not all features work yet.
 
-# Intended Use
-Each month, start by clearing transactions, then import them throughout the month. Transactions are stored to eliminate importing data that is already in the database.
+# How To Use
+- Import Transactions through the month
+- Copy them over to a program such as google sheets that can manage a Summary
+- At the end of the month or budget period, clear the transactions from the database
 
 # Bank Transactions
 - **Id** On rare cases, you might have two identical transactions on the same day, for example, ordering coffee twice in one day
