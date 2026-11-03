@@ -1,16 +1,18 @@
 import sqlite3
 
-from enums import MiscFields, TransactionFields
+from enums import MiscFields
+
+db_path = MiscFields.DATA_BASE.value
 
 
-def init_all_dbs(path=MiscFields.DATA_BASE.value):
-    init_transactions_db(path)
+def init_all_dbs():
+    init_transactions_db()
 
 
-def init_transactions_db(path=MiscFields.DATA_BASE.value):
-    with sqlite3.connect(path) as connection:
-        query = f"""
-                    CREATE TABLE IF NOT EXISTS {TransactionFields.TRANSACTIONS_DB.value} (
+def init_transactions_db():
+    with sqlite3.connect(db_path) as connection:
+        query = """
+                    CREATE TABLE IF NOT EXISTS transactions (
                         id INTEGER PRIMARY KEY,
                         date TEXT NOT NULL,
                         account TEXT NOT NULL,

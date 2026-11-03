@@ -2,8 +2,6 @@ from enum import Enum
 
 
 class TransactionFields(Enum):
-    TRANSACTION_CLASS = "transaction"
-    TRANSACTIONS_DB = "transactions"
     ID = "id"
     DATE = "date"
     ACCOUNT = "acount"
