@@ -11,30 +11,46 @@ from transactions.transaction import Transaction
 
 def import_transactions(file_path):
     if not Path(file_path).is_file():
-        pass  # FileNotFoundError
+        raise FileNotFoundError(f"File {file_path} not found")
 
     with open(file_path, "r", newline="") as file:
         reader = csv.DictReader(file)
 
         if not reader.fieldnames:
-            pass  # Empty or missing CSV headers
+            raise ValueError("Invalid CSV file")
+
+        transactions = get_transactions()
 
         if CapitalOneAccountFields.ACCOUNT_NUMBER.value in reader.fieldnames:
             transaction_factory = Transaction.from_capital_one_account
         else:
             transaction_factory = Transaction.from_capital_one_credit_card
 
+        count = 0
+
         for row in reader:
             transaction = transaction_factory(row)
-            _insert_transaction(transaction)
+            if transaction not in transactions:
+                _insert_transaction(transaction)
+                count += 1
+
+    return count
 
 
-def get_transactions():
-    pass
+def get_transactions() -> list[Transaction]:
+    with sqlite3.connect(db_path) as connection:
+        connection.row_factory = sqlite3.Row  # Allows csv style row format
+        rows = connection.execute("SELECT * FROM transactions").fetchall()
+
+        transactions = _convert_rows_to_transactions(rows)
+
+        return transactions
 
 
 def delete_transactions():
-    pass
+    with sqlite3.connect(db_path) as connection:
+        cursor = connection.execute("DELETE FROM transactions")
+        return cursor.rowcount
 
 
 # ==================== Private Methods ====================
@@ -44,3 +60,13 @@ def _insert_transaction(transaction):
     with sqlite3.connect(db_path) as connection:
         query = "INSERT INTO transactions(date, account, description, category, amount, excluded) values (?, ?, ?, ?, ?, ?)"
         connection.execute(query, transaction.params)
+
+
+def _convert_rows_to_transactions(rows: list) -> list[Transaction]:
+    transactions = []
+
+    for row in rows:
+        transaction = Transaction.from_sql_row(row)
+        transactions.append(transaction)
+
+    return transactions

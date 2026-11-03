@@ -4,7 +4,7 @@ from enum import Enum
 class TransactionFields(Enum):
     ID = "id"
     DATE = "date"
-    ACCOUNT = "acount"
+    ACCOUNT = "account"
     DESCRIPTION = "description"
     CATEGORY = "category"
     AMOUNT = "amount"

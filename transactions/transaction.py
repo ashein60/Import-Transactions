@@ -72,3 +72,6 @@ class Transaction:
             str(self.amount),
             self.excluded,
         )
+
+    def __str__(self):
+        return f"{self.date}, {self.account}, {self.description}, {self.category}, {self.amount}, {self.excluded}"
