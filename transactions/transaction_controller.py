@@ -58,7 +58,7 @@ def delete_transactions() -> int:
 
 def _insert_transaction(transaction):
     with sqlite3.connect(database_handler.db_path) as connection:
-        query = "INSERT INTO transactions(date, account, description, category, amount, excluded) values (?, ?, ?, ?, ?, ?)"
+        query = "INSERT INTO transactions (date, account, description, category, amount, excluded) values (?, ?, ?, ?, ?, ?)"
         connection.execute(query, transaction.params)
 
 

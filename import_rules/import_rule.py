@@ -17,12 +17,13 @@ class ImportRule:
         input_value: str,
         output_variable: str,
         output_value: str,
+        id: int = -1,
     ):
-        """Does not include id"""
-        self.input_variable = input_variable
-        self.input_value = input_value
-        self.output_variable = output_variable
-        self.output_value = output_value
+        self.id = id
+        self.input_variable = input_variable.lower()
+        self.input_value = input_value.title()
+        self.output_variable = output_variable.lower()
+        self.output_value = output_value.title()
 
     @classmethod
     def from_sql_row(cls, row):

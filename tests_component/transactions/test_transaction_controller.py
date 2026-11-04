@@ -107,7 +107,10 @@ def test_delete_transactions_same_as_import(tmp_path):
     import_count = transaction_controller.import_transactions(DATA_PATH + ACCOUNT_CSV)
     delete_count = transaction_controller.delete_transactions()
 
+    transactions = transaction_controller.get_transactions()
+
     assert import_count == delete_count
+    assert len(transactions) == 0
 
 
 # ==================== Helper Methods ====================
