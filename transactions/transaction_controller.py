@@ -9,7 +9,7 @@ from transactions.transaction import Transaction
 # ==================== Public Methods ====================
 
 
-def import_transactions(file_path):
+def import_transactions(file_path) -> int:
     if not Path(file_path).is_file():
         raise FileNotFoundError(f"File {file_path} not found")
 
@@ -47,7 +47,7 @@ def get_transactions() -> list[Transaction]:
         return transactions
 
 
-def delete_transactions():
+def delete_transactions() -> int:
     with sqlite3.connect(database_handler.db_path) as connection:
         cursor = connection.execute("DELETE FROM transactions")
         return cursor.rowcount
