@@ -28,5 +28,13 @@ class CapitalOneCreditCardFields(Enum):
     CREDIT = "Credit"
 
 
+class ImportRuleFields(Enum):
+    ID = "id"
+    INPUT_VARIABLE = "input_variable"
+    INPUT_VALUE = "input_value"
+    OUTPUT_VARIABLE = "output_variable"
+    OUTPUT_VALUE = "output_value"
+
+
 class MiscFields(Enum):
     DATA_BASE = "database.db"
