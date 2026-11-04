@@ -1,3 +1,5 @@
+from datetime import datetime
+from decimal import Decimal
 from enum import Enum
 
 
@@ -9,6 +11,16 @@ class TransactionFields(Enum):
     CATEGORY = "category"
     AMOUNT = "amount"
     EXCLUDED = "excluded"
+
+
+TRANSACTION_ATTRIBUTE_TYPES = {
+    TransactionFields.DATE.value: datetime,
+    TransactionFields.ACCOUNT.value: str,
+    TransactionFields.DESCRIPTION.value: str,
+    TransactionFields.CATEGORY.value: str,
+    TransactionFields.AMOUNT.value: Decimal,
+    TransactionFields.EXCLUDED.value: bool,
+}
 
 
 class CapitalOneAccountFields(Enum):
