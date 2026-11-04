@@ -17,14 +17,16 @@ class Transaction:
 
     @classmethod
     def from_sql_row(cls, row):
+        excluded = row[TransactionFields.EXCLUDED.value] != 0
+
         return cls(
             id=row[TransactionFields.ID.value],
             date=row[TransactionFields.DATE.value],
             account=row[TransactionFields.ACCOUNT.value],
             description=row[TransactionFields.DESCRIPTION.value],
             category=row[TransactionFields.CATEGORY.value],
-            amount=row[TransactionFields.AMOUNT.value],
-            excluded=row[TransactionFields.EXCLUDED.value],
+            amount=Decimal(row[TransactionFields.AMOUNT.value]),
+            excluded=excluded,
         )
 
     @classmethod
@@ -34,7 +36,7 @@ class Transaction:
 
         transaction_type = row[CapitalOneAccountFields.TRANSACTION_TYPE.value]
         transaction_amount = Decimal(row[CapitalOneAccountFields.TRANSACTION_AMOUNT.value])  # fmt: skip
-        amount_multiplier = 1 if transaction_type == "Debit" else -1
+        amount_multiplier = -1 if transaction_type == "Debit" else 1
 
         return cls(
             id=None,
@@ -71,6 +73,18 @@ class Transaction:
             self.category,
             str(self.amount),
             self.excluded,
+        )
+
+    def __eq__(self, other):
+        """Does not include id, category, or excluded"""
+        if not isinstance(other, Transaction):
+            return NotImplemented
+
+        return (
+            self.date == other.date
+            and self.account == other.account
+            and self.description == other.description
+            and self.amount == other.amount
         )
 
     def __str__(self):

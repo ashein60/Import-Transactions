@@ -2,7 +2,7 @@ import csv
 import sqlite3
 from pathlib import Path
 
-from database_handler import db_path
+import database_handler
 from enums import CapitalOneAccountFields
 from transactions.transaction import Transaction
 
@@ -38,7 +38,7 @@ def import_transactions(file_path):
 
 
 def get_transactions() -> list[Transaction]:
-    with sqlite3.connect(db_path) as connection:
+    with sqlite3.connect(database_handler.db_path) as connection:
         connection.row_factory = sqlite3.Row  # Allows csv style row format
         rows = connection.execute("SELECT * FROM transactions").fetchall()
 
@@ -48,7 +48,7 @@ def get_transactions() -> list[Transaction]:
 
 
 def delete_transactions():
-    with sqlite3.connect(db_path) as connection:
+    with sqlite3.connect(database_handler.db_path) as connection:
         cursor = connection.execute("DELETE FROM transactions")
         return cursor.rowcount
 
@@ -57,7 +57,7 @@ def delete_transactions():
 
 
 def _insert_transaction(transaction):
-    with sqlite3.connect(db_path) as connection:
+    with sqlite3.connect(database_handler.db_path) as connection:
         query = "INSERT INTO transactions(date, account, description, category, amount, excluded) values (?, ?, ?, ?, ?, ?)"
         connection.execute(query, transaction.params)
 
