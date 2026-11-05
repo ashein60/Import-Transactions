@@ -106,7 +106,7 @@ def test_insert_import_rule_with_affected_transactions(tmp_path):
     transaction_controller.import_transactions(DATA_PATH + TRANSACTIONS_CSV)
     transaction_controller.get_transactions()
 
-    import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "Kroger", TransactionFields.EXCLUDED.value, "True")  # fmt: skip
+    import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "Kroger", TransactionFields.EXCLUDED.value, "TruE")  # fmt: skip
     import_rule_controller.insert_import_rule(import_rule)
 
     transactions = transaction_controller.get_transactions()
@@ -120,7 +120,7 @@ def test_insert_import_rule_with_unaffected_transactions(tmp_path):
     transaction_controller.import_transactions(DATA_PATH + TRANSACTIONS_CSV)
     before_transactions = transaction_controller.get_transactions()
 
-    import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "foo", TransactionFields.EXCLUDED.value, "True")  # fmt: skip
+    import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "foo", TransactionFields.EXCLUDED.value, "trUe")  # fmt: skip
     import_rule_controller.insert_import_rule(import_rule)
 
     after_transactions = transaction_controller.get_transactions()
@@ -188,7 +188,7 @@ def test_delete_import_rule_by_valid_id(tmp_path):
 # ==================== apply_rules_to_transaction Tests ====================
 
 
-def test__apply_rules_to_transactions_empty_import_rules(tmp_path):
+def test_apply_rules_to_transactions_empty_import_rules(tmp_path):
     common.init_db(tmp_path)
 
     transaction_controller.import_transactions(DATA_PATH + TRANSACTIONS_CSV)
@@ -199,7 +199,7 @@ def test__apply_rules_to_transactions_empty_import_rules(tmp_path):
     # Checking the code runs without errors
 
 
-def test__apply_rules_to_transactions_description_contains_value(tmp_path):
+def test_apply_rules_to_transactions_description_contains_value(tmp_path):
     common.init_db(tmp_path)
 
     import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "Kroger", TransactionFields.CATEGORY.value, "Groceries")  # fmt: skip
@@ -213,7 +213,7 @@ def test__apply_rules_to_transactions_description_contains_value(tmp_path):
     assert any(transaction.category == "Groceries" for transaction in transactions)
 
 
-def test__apply_rules_to_transactions_update_excluded(tmp_path):
+def test_apply_rules_to_transactions_update_excluded(tmp_path):
     common.init_db(tmp_path)
 
     import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "MOBILE PYMT", TransactionFields.EXCLUDED.value, "True")  # fmt: skip
@@ -227,7 +227,7 @@ def test__apply_rules_to_transactions_update_excluded(tmp_path):
     assert any(transaction.excluded == "True" for transaction in transactions)
 
 
-def test__apply_rules_to_transactions_update_same_variable(tmp_path):
+def test_apply_rules_to_transactions_update_same_variable(tmp_path):
     common.init_db(tmp_path)
 
     import_rule = ImportRule(TransactionFields.ACCOUNT.value, "2815", TransactionFields.ACCOUNT.value, "CC")  # fmt: skip
@@ -238,10 +238,10 @@ def test__apply_rules_to_transactions_update_same_variable(tmp_path):
 
     _apply_rules_to_transactions(transactions)
 
-    assert any(transaction.account == "Cc" for transaction in transactions)
+    assert any(transaction.account == "CC" for transaction in transactions)
 
 
-def test__apply_rules_to_transactions_with_two_rules(tmp_path):
+def test_apply_rules_to_transactions_with_two_rules(tmp_path):
     common.init_db(tmp_path)
 
     import_rule = ImportRule(TransactionFields.ACCOUNT.value, "2815", TransactionFields.ACCOUNT.value, "CC")  # fmt: skip
@@ -255,7 +255,7 @@ def test__apply_rules_to_transactions_with_two_rules(tmp_path):
 
     _apply_rules_to_transactions(transactions)
 
-    assert any(transaction.account == "Cc" for transaction in transactions)
+    assert any(transaction.account == "CC" for transaction in transactions)
     assert any(transaction.excluded == "True" for transaction in transactions)
 
 

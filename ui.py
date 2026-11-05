@@ -11,7 +11,7 @@ from transactions import transaction_controller
 def main_loop():
     _clear_screen()
 
-    print("Welcome to Transaction Hub")
+    print("Welcome to Rule Forge")
     print("(1) Manage your transactions")
     print("(2) Manage your import rules")
 
@@ -70,14 +70,24 @@ def _get_transactions():
     _print_entries_as_csv(transactions, "transactions")
 
 
-def _delete_transactions():
+def _delete_transactions():    
     count = transaction_controller.delete_transactions()
 
-    if count > 0:
-        print(f"{count} transactions deleted")
-    else:
+    if count == 0:
         print("No transactions to delete")
+        return
 
+    print("(1) Delete all transactions")
+    print("(2) Cancel")
+
+    choice = input("\nSelect an option: ")
+
+    if choice[:1] != "1":
+        return
+
+    _clear_screen()
+    
+    print(f"{count} transactions deleted")
 
 # ==================== Import Rules Methods ====================
 
@@ -87,7 +97,7 @@ def _manage_import_rules():
     print("What would you like to do?")
     print("(1) Insert an import rule")
     print("(2) Get all import rules")
-    print("(3) Delete an import rule by id")
+    print("(3) Delete an import rule")
 
     choice = input("\nSelect an option: ")
 
@@ -106,39 +116,46 @@ def _manage_import_rules():
 
 
 def _insert_import_rule():
-    print("Transaction column headers: Date (YYYY-MM-DD), Account, Description, Category, Amount, and Excluded (true or false)")  # fmt: skip
-    print("Example: If 'Description' contains 'Walmart' then set 'Category' to 'Groceries'\n")  # fmt: skip
+    print("Table columns:\nDate (YYYY-MM-DD), Account, Description, Category, Amount, and Excluded (true or false)\n")  # fmt: skip
+    print("Example:\nIf 'Description' contains 'Walmart' then set 'Category' to 'Groceries'\n")  # fmt: skip
 
     input_variable = input("What table column should trigger this rule? ")
     input_value = input("What does the table column contain? ")
 
     output_variable = input("What table column should change? ")
-    output_value = input("What should the table column change to? ")
+    output_value = input("What should the table column contain? ")
 
     import_rule = ImportRule(input_variable, input_value, output_variable, output_value)
     success = import_rule_controller.insert_import_rule(import_rule)
 
     _clear_screen()
 
+    # Remove Id since it currently displays as -1
+    import_rule_str = str(import_rule).removeprefix("Id: -1 | ")
+
     if success:
-        print(f"Import rule inserted:\n{import_rule}")
+        print(f"Import rule inserted:\n{import_rule_str}")
     else:
-        print(f"Invalid import rule:\n{import_rule}")
+        print(f"Invalid import rule:\n{import_rule_str}")
 
 
-def _get_import_rules():
+def _get_import_rules() -> int:
     import_rules = import_rule_controller.get_import_rules()
 
     if len(import_rules) == 0:
         print("No import rules exist")
-        return
+        return 0
 
     result = "\n".join(str(import_rule) for import_rule in import_rules)
     print(result)
+    return len(import_rules)
 
 
 def _delete_import_rule_by_id():
-    _get_import_rules()
+    count = _get_import_rules()
+
+    if count == 0:
+        return
 
     import_rule_id = input("\nEnter the id of the import rule you want to delete: ")
     deleted = import_rule_controller.delete_import_rule_by_id(import_rule_id)
