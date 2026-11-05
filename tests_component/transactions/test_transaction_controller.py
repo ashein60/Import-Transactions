@@ -1,66 +1,74 @@
 import pytest
 
-import database_handler
-from enums import MiscFields
+from enums import TransactionFields
+from import_rules import import_rule_controller
+from import_rules.import_rule import ImportRule
+from tests_component import common
 from transactions import transaction_controller
+from transactions.transaction import Transaction
 
 DATA_PATH = "tests_component/transactions/data/"
 ACCOUNT_CSV = "account.csv"
 CREDIT_CARD_CSV = "credit_card.csv"
 EMPTY_CSV = "empty.csv"
 
-# ==================== import_transactions Methods ====================
+# ==================== import_transactions Tests ====================
 
 
 def test_import_transaction_import_invalid_file_path(tmp_path):
-    _init_db(tmp_path)
+    common.init_db(tmp_path)
 
     with pytest.raises(FileNotFoundError):
         transaction_controller.import_transactions(ACCOUNT_CSV)
 
 
 def test_import_transaction_import_invalid_file_data(tmp_path):
-    _init_db(tmp_path)
+    common.init_db(tmp_path)
 
     with pytest.raises(ValueError):
         transaction_controller.import_transactions(DATA_PATH + EMPTY_CSV)
 
 
 def test_import_transaction_import_from_account(tmp_path):
-    _init_db(tmp_path)
+    common.init_db(tmp_path)
 
     count = transaction_controller.import_transactions(DATA_PATH + ACCOUNT_CSV)
     assert count == 2
 
 
 def test_import_transaction_import_from_credit_card(tmp_path):
-    _init_db(tmp_path)
+    common.init_db(tmp_path)
 
     count = transaction_controller.import_transactions(DATA_PATH + CREDIT_CARD_CSV)
     assert count == 2
 
 
-def test_import_transaction_duplicates(tmp_path):
-    _init_db(tmp_path)
+def test_import_transaction_import_with_import_rules(tmp_path):
+    common.init_db(tmp_path)
 
-    transaction_controller.import_transactions(DATA_PATH + ACCOUNT_CSV)
-    count = transaction_controller.import_transactions(DATA_PATH + ACCOUNT_CSV)
+    import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "Kroger", TransactionFields.CATEGORY.value, "Groceries")  # fmt: skip
+    import_rule_controller.insert_import_rule(import_rule)
 
-    assert count == 0
+    count = transaction_controller.import_transactions(DATA_PATH + CREDIT_CARD_CSV)
+    transactions = transaction_controller.get_transactions()
+
+    assert any(transaction.category == "Groceries" for transaction in transactions)
+
+    assert count == 2
 
 
-# ==================== get_transactions Methods ====================
+# ==================== get_transactions Tests ====================
 
 
 def test_get_transactions_Empty(tmp_path):
-    _init_db(tmp_path)
+    common.init_db(tmp_path)
 
     transactions = transaction_controller.get_transactions()
     assert len(transactions) == 0
 
 
 def test_get_transactions_account_correct_data(tmp_path):
-    _init_db(tmp_path)
+    common.init_db(tmp_path)
 
     transaction_controller.import_transactions(DATA_PATH + ACCOUNT_CSV)
     transactions = transaction_controller.get_transactions()
@@ -77,7 +85,7 @@ def test_get_transactions_account_correct_data(tmp_path):
 
 
 def test_get_transactions_credit_card_correct_data(tmp_path):
-    _init_db(tmp_path)
+    common.init_db(tmp_path)
 
     transaction_controller.import_transactions(DATA_PATH + CREDIT_CARD_CSV)
     transactions = transaction_controller.get_transactions()
@@ -91,18 +99,18 @@ def test_get_transactions_credit_card_correct_data(tmp_path):
     assert transactions[0].excluded == False
 
 
-# ==================== delete_transactions Methods ====================
+# ==================== delete_transactions Tests ====================
 
 
 def test_delete_transactions_Empty(tmp_path):
-    _init_db(tmp_path)
+    common.init_db(tmp_path)
 
     count = transaction_controller.delete_transactions()
     assert count == 0
 
 
 def test_delete_transactions_same_as_import(tmp_path):
-    _init_db(tmp_path)
+    common.init_db(tmp_path)
 
     import_count = transaction_controller.import_transactions(DATA_PATH + ACCOUNT_CSV)
     delete_count = transaction_controller.delete_transactions()
@@ -113,10 +121,40 @@ def test_delete_transactions_same_as_import(tmp_path):
     assert len(transactions) == 0
 
 
-# ==================== Helper Methods ====================
+# ==================== replace_transaction_by_id Tests ====================
 
 
-def _init_db(tmp_path):
-    database_handler.db_path = tmp_path / MiscFields.DATA_BASE.value
-    database_handler.init_transactions_db()
-    transaction_controller.delete_transactions()
+def test_replace_transaction_by_id_with_empty_transactions(tmp_path):
+    common.init_db(tmp_path)
+
+    transaction = Transaction(
+        -1, "2026-10-01", "1234", "Kroger", "groceries", 10, False
+    )
+    transaction_controller.replace_transaction_by_id(1, transaction)
+
+
+def test_replace_transaction_by_invalid_id(tmp_path):
+    common.init_db(tmp_path)
+
+    transaction_controller.import_transactions(DATA_PATH + CREDIT_CARD_CSV)
+    transactions = transaction_controller.get_transactions()
+
+    transactions[0].description = "Foo"
+    success = transaction_controller.replace_transaction_by_id(5, transactions[0])
+
+    assert not success
+
+
+def test_replace_transaction_by_valid_id(tmp_path):
+    common.init_db(tmp_path)
+
+    transaction_controller.import_transactions(DATA_PATH + CREDIT_CARD_CSV)
+    transactions = transaction_controller.get_transactions()
+
+    transactions[0].description = "Foo"
+    success = transaction_controller.replace_transaction_by_id(1, transactions[0])
+
+    updated_transactions = transaction_controller.get_transactions()
+
+    assert updated_transactions[0].description == "Foo"
+    assert success

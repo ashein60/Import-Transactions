@@ -76,7 +76,7 @@ class Transaction:
         )
 
     def __eq__(self, other):
-        """Does not include id, category, or excluded"""
+        """Does not include id"""
         if not isinstance(other, Transaction):
             return NotImplemented
 
@@ -84,7 +84,9 @@ class Transaction:
             self.date == other.date
             and self.account == other.account
             and self.description == other.description
+            and self.category == other.category
             and self.amount == other.amount
+            and self.excluded == other.excluded
         )
 
     def __str__(self):
