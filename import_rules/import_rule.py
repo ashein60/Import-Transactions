@@ -21,9 +21,9 @@ class ImportRule:
     ):
         self.id = id
         self.input_variable = input_variable.lower()
-        self.input_value = input_value.replace("$", "").title()
+        self.input_value = input_value.replace("$", "")
         self.output_variable = output_variable.lower()
-        self.output_value = output_value.replace("$", "").title()
+        self.output_value = output_value.replace("$", "")
 
     @classmethod
     def from_sql_row(cls, row):
@@ -59,7 +59,7 @@ class ImportRule:
 
     def __str__(self):
         return (
-            f"Id: {self.id}\t"
-            f"If '{self.input_variable}' contains '{self.input_value}' then "
+            f"Id: {self.id} | "
+            f"If {self.input_variable} contains '{self.input_value}' then "
             f"set {self.output_variable} to '{self.output_value}'"
         )

@@ -43,7 +43,7 @@ def test_import_transaction_import_from_credit_card(tmp_path):
     assert count == 2
 
 
-def test_import_transaction_import_with_import_rules(tmp_path):
+def test_import_transaction_import_with_import_rules_str(tmp_path):
     common.init_db(tmp_path)
 
     import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "Kroger", TransactionFields.CATEGORY.value, "Groceries")  # fmt: skip
@@ -53,6 +53,34 @@ def test_import_transaction_import_with_import_rules(tmp_path):
     transactions = transaction_controller.get_transactions()
 
     assert any(transaction.category == "Groceries" for transaction in transactions)
+
+    assert count == 2
+
+
+def test_import_transaction_import_with_import_rules_decimal(tmp_path):
+    common.init_db(tmp_path)
+
+    import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "Kroger", TransactionFields.AMOUNT.value, "10.14")  # fmt: skip
+    import_rule_controller.insert_import_rule(import_rule)
+
+    count = transaction_controller.import_transactions(DATA_PATH + CREDIT_CARD_CSV)
+    transactions = transaction_controller.get_transactions()
+
+    assert any(str(transaction.amount) == "10.14" for transaction in transactions)
+
+    assert count == 2
+
+
+def test_import_transaction_import_with_import_rules_bool(tmp_path):
+    common.init_db(tmp_path)
+
+    import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "Kroger", TransactionFields.EXCLUDED.value, "False")  # fmt: skip
+    import_rule_controller.insert_import_rule(import_rule)
+
+    count = transaction_controller.import_transactions(DATA_PATH + CREDIT_CARD_CSV)
+    transactions = transaction_controller.get_transactions()
+
+    assert any(str(transaction.excluded) == "False" for transaction in transactions)
 
     assert count == 2
 

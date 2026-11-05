@@ -43,6 +43,7 @@ def delete_import_rule_by_id(rule_id: int) -> bool:
 
 
 def apply_rules_to_transaction(transaction: Transaction):
+    """Intended to be called by other controller methods"""
     import_rules = get_import_rules()
 
     for import_rule in import_rules:
@@ -82,7 +83,7 @@ def _is_valid_value_for_transaction_variable(variable: str, value: str) -> bool:
         if variable_input_type == datetime:
             datetime.strptime(value, "%Y-%m-%d")
         elif variable_input_type == bool:
-            if value != "True" and value != "False":
+            if value.lower() != "true" and value.lower() != "false":
                 return False
         else:
             variable_input_type(value)
@@ -107,7 +108,7 @@ def _apply_rule_to_transaction(import_rule: ImportRule, transaction: Transaction
 
     if (
         input_variable is not None
-        and import_rule.input_value.lower() in input_variable.lower()
+        and import_rule.input_value.lower() in str(input_variable).lower()
     ):
         setattr(transaction, import_rule.output_variable, import_rule.output_value)  # fmt: skip
         return True
