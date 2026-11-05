@@ -1,4 +1,4 @@
-# Import-Transactions
+# Rule Forge
 Using bank csv files, create rules to customize or exclude bank transactions. This only works with Capital One checking and savings accounts and credit cards. I use Google sheets to manage a Summary table, but it's time consuming to manually re-assign transaction columns every month.
 
 > [!Note]
