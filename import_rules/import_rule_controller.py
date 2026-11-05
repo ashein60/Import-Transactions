@@ -5,6 +5,8 @@ from decimal import InvalidOperation
 import database_handler
 from enums import TRANSACTION_ATTRIBUTE_TYPES, TransactionFields
 from import_rules.import_rule import ImportRule
+from transactions import transaction_controller
+from transactions.transaction import Transaction
 
 # ==================== Public Methods ====================
 
@@ -12,6 +14,8 @@ from import_rules.import_rule import ImportRule
 def insert_import_rule(import_rule: ImportRule) -> bool:
     if not _has_valid_import_variables(import_rule) or not _has_valid_import_values(import_rule):  # fmt: skip
         return False
+
+    _apply_rule_to_transactions(import_rule)
 
     with sqlite3.connect(database_handler.db_path) as connection:
         query = "INSERT INTO IMPORT_RULES (input_variable, input_value, output_variable, output_value) values (?, ?, ?, ?)"
@@ -36,6 +40,13 @@ def delete_import_rule_by_id(rule_id: int) -> bool:
         cursor = connection.execute(query, (rule_id,))
 
         return cursor.rowcount == 1
+
+
+def apply_rules_to_transaction(transaction: Transaction):
+    import_rules = get_import_rules()
+
+    for import_rule in import_rules:
+        _apply_rule_to_transaction(import_rule, transaction)
 
 
 # ==================== Private Methods ====================
@@ -89,3 +100,24 @@ def _convert_rows_to_import_rules(rows: list) -> list[ImportRule]:
         import_rules.append(import_rule)
 
     return import_rules
+
+
+def _apply_rule_to_transaction(import_rule: ImportRule, transaction: Transaction) -> bool:  # fmt: skip
+    input_variable = getattr(transaction, import_rule.input_variable, None)
+
+    if (
+        input_variable is not None
+        and import_rule.input_value.lower() in input_variable.lower()
+    ):
+        setattr(transaction, import_rule.output_variable, import_rule.output_value)  # fmt: skip
+        return True
+
+    return False
+
+
+def _apply_rule_to_transactions(import_rule: ImportRule):
+    transactions = transaction_controller.get_transactions()
+
+    for transaction in transactions:
+        if _apply_rule_to_transaction(import_rule, transaction):
+            transaction_controller.replace_transaction_by_id(transaction.id, transaction)  # fmt: skip

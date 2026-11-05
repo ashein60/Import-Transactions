@@ -4,6 +4,7 @@ from pathlib import Path
 
 import database_handler
 from enums import CapitalOneAccountFields
+from import_rules import import_rule_controller
 from transactions.transaction import Transaction
 
 # ==================== Public Methods ====================
@@ -30,7 +31,9 @@ def import_transactions(file_path) -> int:
 
         for row in reader:
             transaction = transaction_factory(row)
+
             if transaction not in transactions:
+                import_rule_controller.apply_rules_to_transaction(transaction)
                 _insert_transaction(transaction)
                 count += 1
 
@@ -51,6 +54,14 @@ def delete_transactions() -> int:
     with sqlite3.connect(database_handler.db_path) as connection:
         cursor = connection.execute("DELETE FROM transactions")
         return cursor.rowcount
+
+
+def replace_transaction_by_id(transaction_id: int, transaction: Transaction) -> bool:
+    with sqlite3.connect(database_handler.db_path) as connection:
+        query = "UPDATE transactions SET date = ?, account = ?, description = ?, category = ?, amount = ?, excluded = ? WHERE id = ?"
+        cursor = connection.execute(query, (*transaction.params, transaction_id))
+
+        return cursor.rowcount == 1
 
 
 # ==================== Private Methods ====================
