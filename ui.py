@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 
 from import_rules import import_rule_controller
 from import_rules.import_rule import ImportRule
@@ -10,10 +11,10 @@ from transactions import transaction_controller
 
 def main_loop():
     _clear_screen()
-
-    print("Welcome to Rule Forge")
+    print("\nWelcome to Rule Forge")
     print("(1) Manage your transactions")
     print("(2) Manage your import rules")
+    print("(3) Exit")
 
     choice = input("\nSelect an option: ")
 
@@ -24,8 +25,13 @@ def main_loop():
         case "2":
             _clear_screen()
             _manage_import_rules()
+        case "3":
+            sys.exit()
         case _:
             _invalid_choice(choice)
+
+    _press_enter_to_continue()
+    main_loop()
 
 
 # ==================== Transaction Methods ====================
@@ -36,6 +42,7 @@ def _manage_transactions():
     print("(1) Import transactions")
     print("(2) Get all transactions")
     print("(3) Delete all transactions")
+    print("(4) Return home")
 
     choice = input("\nSelect an option: ")
 
@@ -49,6 +56,8 @@ def _manage_transactions():
         case "3":
             _clear_screen()
             _delete_transactions()
+        case "4":
+            main_loop()
         case _:
             _invalid_choice(choice)
 
@@ -70,7 +79,7 @@ def _get_transactions():
     _print_entries_as_csv(transactions, "transactions")
 
 
-def _delete_transactions():    
+def _delete_transactions():
     count = transaction_controller.delete_transactions()
 
     if count == 0:
@@ -86,8 +95,9 @@ def _delete_transactions():
         return
 
     _clear_screen()
-    
+
     print(f"{count} transactions deleted")
+
 
 # ==================== Import Rules Methods ====================
 
@@ -98,6 +108,7 @@ def _manage_import_rules():
     print("(1) Insert an import rule")
     print("(2) Get all import rules")
     print("(3) Delete an import rule")
+    print("(4) Return home")
 
     choice = input("\nSelect an option: ")
 
@@ -111,6 +122,8 @@ def _manage_import_rules():
         case "3":
             _clear_screen()
             _delete_import_rule_by_id()
+        case "4":
+            main_loop()
         case _:
             _invalid_choice(choice)
 
@@ -191,3 +204,7 @@ def _print_entries_as_csv(entries: list, entry_name: str):
 
     values = "\n".join(str(entry) for entry in entries)
     print(values)
+
+
+def _press_enter_to_continue():
+    input("\nPress [Enter] to Continue...")
