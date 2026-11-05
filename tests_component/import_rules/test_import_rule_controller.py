@@ -71,6 +71,15 @@ def test_insert_import_rule_valid_amount_value(tmp_path):
     assert success
 
 
+def test_insert_import_rule_valid_amount_value_dollar_sign(tmp_path):
+    _init_db(tmp_path)
+
+    import_rule = ImportRule(TransactionFields.DESCRIPTION.value, "Kroger", TransactionFields.AMOUNT.value, "$10.11")  # fmt: skip
+    success = import_rule_controller.insert_import_rule(import_rule)
+
+    assert success
+
+
 def test_insert_import_rule_invalid_excluded_value(tmp_path):
     _init_db(tmp_path)
 

@@ -32,11 +32,9 @@ def get_import_rules() -> list[ImportRule]:
 
 def delete_import_rule_by_id(rule_id: int) -> bool:
     with sqlite3.connect(database_handler.db_path) as connection:
-        query = """
-                    DELETE FROM import_rules
-                    WHERE id = ?
-                """
+        query = "DELETE FROM import_rules WHERE id = ?"
         cursor = connection.execute(query, (rule_id,))
+
         return cursor.rowcount == 1
 
 
