@@ -31,9 +31,9 @@ def import_transactions(file_path) -> int:
 
         for row in reader:
             transaction = transaction_factory(row)
+            import_rule_controller.apply_rules_to_transaction(transaction)
 
             if transaction not in transactions:
-                import_rule_controller.apply_rules_to_transaction(transaction)
                 _insert_transaction(transaction)
                 count += 1
 
