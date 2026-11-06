@@ -144,7 +144,7 @@ def _insert_import_rule():
     _clear_screen()
 
     # Remove Id since it currently displays as -1
-    import_rule_str = str(import_rule).removeprefix("Id: -1 | ")
+    import_rule_str = str(import_rule).split("| ", 1)[1]
 
     if success:
         print(f"Import rule inserted:\n{import_rule_str}")
