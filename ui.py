@@ -201,7 +201,7 @@ def _print_entries_as_csv(entries: list, entry_name: str):
     headers.remove("id")
 
     headers_string = ", ".join(headers)
-    print(headers_string.title())
+    print(headers_string.title() + "\n")
 
     values = "\n".join(str(entry) for entry in entries)
     print(values)

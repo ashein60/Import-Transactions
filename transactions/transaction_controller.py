@@ -44,7 +44,7 @@ def get_transactions() -> list[Transaction]:
     with sqlite3.connect(database_handler.db_path) as connection:
         connection.row_factory = sqlite3.Row  # Allows csv style row format
         rows = connection.execute(
-            "SELECT * FROM transactions ORDER BY date DESC"
+            "SELECT * FROM transactions ORDER BY date DESC, category ASC, description ASC"
         ).fetchall()
 
         transactions = _convert_rows_to_transactions(rows)
