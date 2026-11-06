@@ -58,8 +58,10 @@ class ImportRule:
         )
 
     def __str__(self):
+        id_str = " " + str(self.id) if self.id < 10 else str(self.id)
+
         return (
-            f"Id: {self.id} | "
+            f"Id: {id_str} | "
             f"If {self.input_variable} contains '{self.input_value}' then "
             f"set {self.output_variable} to '{self.output_value}'"
         )
