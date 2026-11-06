@@ -170,6 +170,7 @@ def _delete_import_rule_by_id():
     if count == 0:
         return
 
+    print("\nNote:\nDeleting an import rule does not affect existing transactions")
     import_rule_id = input("\nEnter the id of the import rule you want to delete: ")
     deleted = import_rule_controller.delete_import_rule_by_id(import_rule_id)
 
