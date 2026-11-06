@@ -79,9 +79,6 @@ def _is_valid_value_for_transaction_variable(variable: str, value: str) -> bool:
     """Ex: variable = 'amount' and value = '10.32'"""
     variable_input_type = TRANSACTION_ATTRIBUTE_TYPES[variable]
 
-    if value == "":
-        return True
-
     try:
         if variable_input_type == datetime:
             datetime.strptime(value, "%Y-%m-%d")

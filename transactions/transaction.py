@@ -43,7 +43,7 @@ class Transaction:
             date=date_formatted,
             account=row[CapitalOneAccountFields.ACCOUNT_NUMBER.value],
             description=row[CapitalOneAccountFields.TRANSACTION_DESCRIPTION.value],
-            category="",  # Will be defined by import rules
+            category="None",  # Will be defined by import rules
             amount=transaction_amount * amount_multiplier,
         )
 
