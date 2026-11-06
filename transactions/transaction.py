@@ -85,8 +85,8 @@ class Transaction:
             and self.account == other.account
             and self.description == other.description
             and self.category == other.category
-            and self.amount == other.amount
-            and self.excluded == other.excluded
+            and str(self.amount) == str(other.amount)
+            and str(self.excluded) == str(other.excluded)
         )
 
     def __str__(self):
